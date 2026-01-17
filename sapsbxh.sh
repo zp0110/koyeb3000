@@ -75,6 +75,3 @@ crontime=5
 
 echo "*****************************************************"
 echo "*****************************************************"
-echo "zp0110Github项目  ：github.com/zp0110"
-echo "zp0110Blogger博客 ：zp0110.github.io"
-echo "zp0110YouTube频道 ：github.com/zp0110"

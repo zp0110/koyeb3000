@@ -3,7 +3,6 @@ koyeb3000在SAP平台部署代理节点，基于[eooce](https://github.com/eooce
 
 
 
-Vless-ws-tls为默认安装，Argo固定或临时隧道为可选，也可使用[workers/pages反代方式](https://github.com/zp0110/koyeb3000/blob/main/_worker.js)启用Vless-ws-tls的CDN替代Argo的CDN
 
 
 
@@ -23,7 +22,6 @@ SAP个人注册地址：https://www.sap.com/products/technology-platform/trial.h
 
 
 
-* 方式一：[Github方式](https://github.com/zp0110/koyeb3000/blob/main/.github/workflows/main.yml)，请自建私库设置运行。安装启动同时进行，无定时保活
 
 
 
@@ -68,7 +66,6 @@ VPS服务器方式脚本地址：（再次进入快捷方式```bash sap.sh```）
 
 
 
-* 方式一：[Github方式](https://github.com/zp0110/koyeb3000/blob/main/.github/workflows/mainh.yml)，请自建私库设置运行。仅适用手动保活
 
 
 
