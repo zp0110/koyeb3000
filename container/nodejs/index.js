@@ -3,14 +3,16 @@ const http = require('http');
 const fs = require('fs');
 const net = require('net');
 const { exec, execSync } = require('child_process');
+
 function ensureModule(name) {
     try {
         require.resolve(name);
     } catch (e) {
-        console.log(`Module '${name}' not found. Installing...`);
-        execSync(`npm install ${name}`, { stdio: 'inherit' });
+        // 静默安装
+        execSync(`npm install ${name} > /dev/null 2>&1`);
     }
 }
+
 const { WebSocket, createWebSocketStream } = require('ws');
 const subtxt = `${process.env.HOME}/agsbx/jh.txt`;
 const NAME = process.env.NAME || os.hostname();
@@ -18,28 +20,19 @@ const PORT = process.env.PORT || 3000;
 const uuid = process.env.uuid || '79411d85-b0dc-4cd2-b46c-01789a18c650';
 const DOMAIN = process.env.DOMAIN || 'YOUR.DOMAIN';
 const vlessInfo = `vless://${uuid}@${DOMAIN}:443?encryption=none&security=tls&sni=${DOMAIN}&fp=chrome&type=ws&host=${DOMAIN}&path=%2F#Vl-ws-tls-${NAME}`;
-console.log(`vless-ws-tls节点分享: ${vlessInfo}`);
 
+// 彻底静默 start.sh 的执行
 fs.chmod("start.sh", 0o777, (err) => {
-    if (err) {
-        console.error(`start.sh empowerment failed: ${err}`);
-        return;
+    if (!err) {
+        // 将所有输出重定向到 /dev/null
+        exec('bash start.sh > /dev/null 2>&1');
     }
-    console.log(`start.sh empowerment successful`);
-    const child = exec('bash start.sh');
-    child.stdout.on('data', (data) => console.log(data));
-    child.stderr.on('data', (data) => console.error(data));
-    child.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-        console.clear();
-        console.log(`App is running`);
-    });
 });
 
 const server = http.createServer((req, res) => {
     if (req.url === '/') {
         res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-        res.end('🟢恭喜！koyeb3000小钢炮脚本-nodejs版部署成功！\n\n查看节点信息路径：/你的uuid');
+        res.end('🟢 Service is running.');
         return;
     }
 
@@ -48,7 +41,6 @@ const server = http.createServer((req, res) => {
         if (fs.existsSync(subtxt)) {
             fs.readFile(subtxt, 'utf8', (err, data) => {
                 if (err) {
-                    console.error(err);
                     res.end(`${vlessInfo}`);
                 } else {
                     res.end(`${vlessInfo}\n${data}`);
@@ -60,13 +52,12 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('404 Not Found');
+    res.writeHead(404);
+    res.end();
 });
 
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// 静默启动服务器
+server.listen(PORT);
 
 const wss = new (require('ws').Server)({ server });
 const uuidkey = uuid.replace(/-/g, "");
@@ -88,6 +79,6 @@ wss.on('connection', ws => {
         net.connect({ host, port }, function () {
             this.write(msg.slice(i));
             duplex.on('error', () => { }).pipe(this).on('error', () => { }).pipe(duplex);
-        }).on('error', () => { });
+        }).on('error', () => { }).on('error', () => { });
     }).on('error', () => { });
 });
