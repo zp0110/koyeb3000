@@ -20,7 +20,7 @@ export agk=${agk}
 export ippz=${ippz}
 export warp=${warp}
 export name=${name}
-v46ur	# echo "节点配置如下："
+v46ur	# # echo "节点配置如下："
 	echo
 	showmode(){
 	# echo "---------------------------------------------------------"
@@ -127,12 +127,12 @@ uuid=$(cat "$HOME/agsbx/uuid")
 	}
 installxray(){
 echo
-echo "=========启用xray内核========="
+# echo "=========启用xray内核========="
 mkdir -p "$HOME/agsbx/xrk"
 	if [ -e "$HOME/agsbx/xray" ]; then
 	chmod +x "$HOME/agsbx/xray"
 	sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
-	echo "已安装Xray正式版内核：$sbcore"
+	# echo "已安装Xray正式版内核：$sbcore"
 	fi
 cat > "$HOME/agsbx/xr.json" <<EOF
 {
@@ -363,11 +363,11 @@ fi
 
 installsb(){
 echo
-echo "=========启用Sing-box内核========="
+# echo "=========启用Sing-box内核========="
 if [ ! -e "$HOME/agsbx/sing-box" ]; then
 chmod +x "$HOME/agsbx/sing-box"
 sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/version/{print $NF}')
-echo "已安装Sing-box正式版内核：$sbcore"
+# echo "已安装Sing-box正式版内核：$sbcore"
 fi
 cat > "$HOME/agsbx/sb.json" <<EOF
 {
@@ -832,10 +832,10 @@ xrsbout
 fi
 if [ -n "$argo" ]; then
 echo
-echo "=========启用Cloudflared-argo内核========="
+# echo "=========启用Cloudflared-argo内核========="
 if [ ! -e "$HOME/agsbx/cloudflared" ]; then
 argocore=$({ command -v curl >/dev/null 2>&1 && curl -Ls https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared || wget -qO- https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared; } | grep -Eo '"[0-9.]+"' | sed -n 1p | tr -d '",')
-echo "下载Cloudflared-argo最新正式版内核：$argocore"
+# echo "下载Cloudflared-argo最新正式版内核：$argocore"
 url="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$cpu"; out="$HOME/agsbx/cloudflared"; (command -v curl>/dev/null 2>&1 && curl -Lo "$out" -# --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -O "$out" --tries=2 "$url")
 chmod +x "$HOME/agsbx/cloudflared"
 fi
@@ -849,7 +849,7 @@ else
 argoname='临时'
 nohup "$HOME/agsbx/cloudflared" tunnel --url http://localhost:$(cat $HOME/agsbx/argoport.log) --edge-ip-version auto --no-autoupdate --protocol http2 > "$HOME/agsbx/argo.log" 2>&1 &
 fi
-echo "申请Argo$argoname隧道中……请稍等"
+# echo "申请Argo$argoname隧道中……请稍等"
 sleep 8
 if [ -n "${agn}" ] && [ -n "${agk}" ]; then
 argodomain=$(cat "$HOME/agsbx/sbargoym.log" 2>/dev/null)
@@ -870,22 +870,22 @@ fi
 fi
 }
 koyeb3000status(){
-echo "=========当前三大内核运行状态========="
+# echo "=========当前三大内核运行状态========="
 procs=$(find /proc/*/exe -type l 2>/dev/null | grep -E '/proc/[0-9]+/exe' | xargs -r readlink 2>/dev/null)
 if echo "$procs" | grep -Eq 'agsbx/s' || pgrep -f 'agsbx/s' >/dev/null 2>&1; then
-echo "Sing-box：运行中"
+# echo "Sing-box：运行中"
 else
-echo "Sing-box：未启用"
+# echo "Sing-box：未启用"
 fi
 if echo "$procs" | grep -Eq 'agsbx/x' || pgrep -f 'agsbx/x' >/dev/null 2>&1; then
-echo "Xray：运行中"
+# echo "Xray：运行中"
 else
-echo "Xray：未启用"
+# echo "Xray：未启用"
 fi
 if echo "$procs" | grep -Eq 'agsbx/c' || pgrep -f 'agsbx/c' >/dev/null 2>&1; then
-echo "Argo：运行中"
+# echo "Argo：运行中"
 else
-echo "Argo：未启用"
+# echo "Argo：未启用"
 fi
 }
 cip(){
@@ -923,7 +923,7 @@ fi
 echo
 koyeb3000status
 echo
-echo "=========当前服务器本地IP情况========="
+# echo "=========当前服务器本地IP情况========="
 	# echo "本地IPV4地址：$vps_ipv4 $w4"
 	# echo "本地IPV6地址：$vps_ipv6 $w6"
 	# echo "服务器地区：$location"
@@ -955,7 +955,7 @@ sxname=$(cat "$HOME/agsbx/name" 2>/dev/null)
 xvvmcdnym=$(cat "$HOME/agsbx/cdnym" 2>/dev/null)
 	# echo "*********************************************************"
 	# echo "*********************************************************"
-	# echo "节点配置如下："
+	# # echo "节点配置如下："
 	# echo
 	case "$server_ip" in
 	104.28*|\[2a09*) echo "检测到有WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请把客户端地址上的WARP的IP手动更换为VPS本地IPV4或者IPV6地址" && sleep 3 ;;
@@ -1172,14 +1172,14 @@ sbdnsyx="ipv4_only"
 fi
 }
 v4orv6
-echo "VPS系统：$op"
-echo "CPU架构：$cpu"
-echo "脚本未安装，开始安装…………" && sleep 2
+# echo "VPS系统：$op"
+# echo "CPU架构：$cpu"
+# echo "脚本未安装，开始安装…………" && sleep 2
 ins
 cip
 echo
 else
-echo "脚本已安装"
+# echo "脚本已安装"
 echo
 koyeb3000status
 echo
