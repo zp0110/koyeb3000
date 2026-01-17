@@ -1,0 +1,80 @@
+name: SAP多账户自动部署
+# 请设为私库！！！
+on:
+  workflow_dispatch:
+
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: true
+
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    env:
+      # 必填！每个账号邮箱空一格
+      CF_USERNAMES: "" 
+
+
+      # 必填！每个账号对应密码空一格
+      CF_PASSWORDS: ""
+
+
+      # 必填！每个账号对应地区空一格
+      REGIONS: "" 
+      
+      # 必填！每个账号对应UUID空一格
+      UUIDS: "" 
+
+
+      # 选填！每个账号对应名称空一格，不填则每个实例自动生成，多个账号中有个别账号自动生成填no
+      APP_NAMES: ""
+
+
+      # 选填！Argo固定/临时隧道端口，每个账号对应端口空一格，不填则每个实例不启用argo，多个账号中有个别账号不启用填no
+      VMPTS: ""
+
+
+      # 选填！Argo固定隧道域名，每个账号对应域名空一格，不填则每个实例启用argo临时隧道，多个账号中有个别账号不启用填no
+      AGNS: ""
+
+
+      # 选填！Argo固定隧道token，每个账号对应token空一格，不填则每个实例启用argo临时隧道，多个账号中有个别账号不启用填no
+      AGKS: ""
+
+
+      # 优先独立执行！删除账户内的APP名称，多个APP空一格，执行后务必还原留空状态：DELAPP: "" 
+      DELAPP: "" 
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Install Cloud Foundry CLI
+        run: |
+          wget -q https://github.com/cloudfoundry/cli/releases/download/v8.16.0/cf8-cli_8.16.0_linux_x86-64.tgz
+          tar -xzf cf8-cli_8.16.0_linux_x86-64.tgz
+          sudo mv cf8 /usr/local/bin/cf8
+          sudo ln -sf /usr/local/bin/cf8 /usr/local/bin/cf
+          sudo chmod +x /usr/local/bin/cf8
+
+
+      - name: deployment
+        run: |
+          read -ra CF_USERNAMES <<< "$CF_USERNAMES"
+          read -ra CF_PASSWORDS <<< "$CF_PASSWORDS"
+          read -ra REGIONS <<< "$REGIONS"
+          read -ra UUIDS <<< "$UUIDS"
+          read -ra APP_NAMES <<< "$APP_NAMES"
+          read -ra VMPTS <<< "$VMPTS"
+          read -ra AGNS <<< "$AGNS"
+          read -ra AGKS <<< "$AGKS"
+          echo "*****************************************************"
+          echo "*****************************************************"
+          echo "甬哥Github项目  ：github.com/yonggekkk"
+          echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
+          echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
+          echo "Argosbx小钢炮脚本-SAP多账户自动部署并保活脚本【Github】"

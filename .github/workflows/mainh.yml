@@ -1,0 +1,76 @@
+name: SAP多账户仅保活
+# 请设为私库！！！
+on:
+  workflow_dispatch:
+
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: true
+
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    env:
+      # 必填！每个账号邮箱空一格
+      CF_USERNAMES: "" 
+
+
+      # 必填！每个账号对应密码空一格
+      CF_PASSWORDS: ""
+
+
+      # 必填！每个账号对应地区空一格
+      REGIONS: "" 
+
+
+      # 必填！每个账号对应UUID空一格
+      UUIDS: "" 
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Install Cloud Foundry CLI
+        run: |
+          wget -q https://github.com/cloudfoundry/cli/releases/download/v8.16.0/cf8-cli_8.16.0_linux_x86-64.tgz
+          tar -xzf cf8-cli_8.16.0_linux_x86-64.tgz
+          sudo mv cf8 /usr/local/bin/cf8
+          sudo ln -sf /usr/local/bin/cf8 /usr/local/bin/cf
+          sudo chmod +x /usr/local/bin/cf8
+
+
+      - name: deployment
+        run: |
+          read -ra CF_USERNAMES <<< "$CF_USERNAMES"
+          read -ra CF_PASSWORDS <<< "$CF_PASSWORDS"
+          read -ra REGIONS <<< "$REGIONS"
+          read -ra UUIDS <<< "$UUIDS"
+          echo "*****************************************************"
+          echo "*****************************************************"
+          echo "甬哥Github项目  ：github.com/yonggekkk"
+          echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
+          echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
+          echo "Argosbx小钢炮脚本-SAP多账户保活脚本【Github】"
+          echo "版本：V25.10.19"
+          echo "*****************************************************"
+          echo "*****************************************************"
+          pushout(){
+            if echo "$push_out" | grep -iq "insufficient"; then
+              echo "🔴第 $((i+1)) 个实例部署：$apps 失败了，SAP资源被人抢光了，明早8:15-9:00再来吧，再见！！"
+              return 1
+            elif echo "$push_out" | grep -q "mapped"; then
+              echo "🔴第 $((i+1)) 个实例部署：$apps 失败了，请更换应用程序APP名称：$apps，再运行一次"
+              return 1
+            elif echo "$push_out" | grep -q "FAILED"; then
+              echo "🔴第 $((i+1)) 个实例部署：$apps 失败了，SAP繁忙中！请自查参数设置是否有误，后台实例是否超配额"
+              return 1
+            else
+              echo "$apps 完成"
+              return 0
+            fi
+          }
+          result(){
