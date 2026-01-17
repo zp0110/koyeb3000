@@ -20,15 +20,15 @@ export agk=${agk}
 export ippz=${ippz}
 export warp=${warp}
 export name=${name}
-v46url="https://icanhazip.com"
-showmode(){
-echo "---------------------------------------------------------"
-echo
-}
-echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo "当前版本：V25.11.20"
-echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-hostname=$(uname -a | awk '{print $2}')
+v46ur	# echo "节点配置如下："
+	echo
+	showmode(){
+	# echo "---------------------------------------------------------"
+	echo
+	}
+	# echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	# echo "当前版本：V25.11.20"
+	# echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"stname=$(uname -a | awk '{print $2}')
 op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
 [ -z "$(systemd-detect-virt 2>/dev/null)" ] && vi=$(virt-what 2>/dev/null) || vi=$(systemd-detect-virt 2>/dev/null)
 case $(uname -m) in
@@ -123,17 +123,17 @@ elif [ -n "$uuid" ]; then
 echo "$uuid" > "$HOME/agsbx/uuid"
 fi
 uuid=$(cat "$HOME/agsbx/uuid")
-echo "UUID密码：$uuid"
-}
+	# echo "UUID密码：$uuid"
+	}
 installxray(){
 echo
 echo "=========启用xray内核========="
 mkdir -p "$HOME/agsbx/xrk"
-if [ ! -e "$HOME/agsbx/xray" ]; then
-chmod +x "$HOME/agsbx/xray"
-sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
-echo "已安装Xray正式版内核：$sbcore"
-fi
+	if [ -e "$HOME/agsbx/xray" ]; then
+	chmod +x "$HOME/agsbx/xray"
+	sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
+	echo "已安装Xray正式版内核：$sbcore"
+	fi
 cat > "$HOME/agsbx/xr.json" <<EOF
 {
   "log": {
@@ -152,7 +152,7 @@ if [ -z "$reym" ]; then
 reym=apple.com
 fi
 echo "$reym" > "$HOME/agsbx/reym"
-echo "Reality域名：$reym"
+	# echo "Reality域名：$reym"
 if [ ! -e "$HOME/agsbx/xrk/private_key" ]; then
 key_pair=$("$HOME/agsbx/xray" x25519)
 private_key=$(echo "$key_pair" | grep "PrivateKey" | awk '{print $2}')
@@ -186,7 +186,7 @@ elif [ -n "$xhpt" ]; then
 echo "$xhpt" > "$HOME/agsbx/xhpt"
 fi
 xhpt=$(cat "$HOME/agsbx/xhpt")
-echo "Vless-xhttp-reality-v端口：$xhpt"
+	# echo "Vless-xhttp-reality-v端口：$xhpt"
 cat >> "$HOME/agsbx/xr.json" <<EOF
     {
       "tag":"xhttp-reality",
@@ -236,10 +236,10 @@ elif [ -n "$vxpt" ]; then
 echo "$vxpt" > "$HOME/agsbx/vxpt"
 fi
 vxpt=$(cat "$HOME/agsbx/vxpt")
-echo "Vless-xhttp-enc端口：$vxpt"
+	# echo "Vless-xhttp-enc端口：$vxpt"
 if [ -n "$cdnym" ]; then
 echo "$cdnym" > "$HOME/agsbx/cdnym"
-echo "80系CDN或者回源CDN的host域名 (确保IP已解析在CF域名)：$cdnym"
+	# echo "80系CDN或者回源CDN的host域名 (确保IP已解析在CF域名)：$cdnym"
 fi
 cat >> "$HOME/agsbx/xr.json" <<EOF
     {
@@ -924,9 +924,9 @@ echo
 koyeb3000status
 echo
 echo "=========当前服务器本地IP情况========="
-echo "本地IPV4地址：$vps_ipv4 $w4"
-echo "本地IPV6地址：$vps_ipv6 $w6"
-echo "服务器地区：$location"
+	# echo "本地IPV4地址：$vps_ipv4 $w4"
+	# echo "本地IPV6地址：$vps_ipv6 $w6"
+	# echo "服务器地区：$location"
 echo
 sleep 2
 if [ "$ippz" = "4" ]; then
@@ -953,142 +953,142 @@ uuid=$(cat "$HOME/agsbx/uuid")
 server_ip=$(cat "$HOME/agsbx/server_ip.log")
 sxname=$(cat "$HOME/agsbx/name" 2>/dev/null)
 xvvmcdnym=$(cat "$HOME/agsbx/cdnym" 2>/dev/null)
-echo "*********************************************************"
-echo "*********************************************************"
-echo "节点配置如下："
-echo
-case "$server_ip" in
-104.28*|\[2a09*) echo "检测到有WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请把客户端地址上的WARP的IP手动更换为VPS本地IPV4或者IPV6地址" && sleep 3 ;;
-esac
-echo
-reym=$(cat "$HOME/agsbx/reym" 2>/dev/null)
-cfip() { echo $((RANDOM % 13 + 1)); }
-if [ -e "$HOME/agsbx/xray" ]; then
-private_key_x=$(cat "$HOME/agsbx/xrk/private_key" 2>/dev/null)
-public_key_x=$(cat "$HOME/agsbx/xrk/public_key" 2>/dev/null)
-short_id_x=$(cat "$HOME/agsbx/xrk/short_id" 2>/dev/null)
-enkey=$(cat "$HOME/agsbx/xrk/enkey" 2>/dev/null)
-fi
-if [ -e "$HOME/agsbx/sing-box" ]; then
-private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
-public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
-short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
-sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
-fi
-if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
-echo "💣【 Vless-xhttp-reality-enc 】支持ENC加密，节点信息如下："
-xhpt=$(cat "$HOME/agsbx/xhpt")
-vl_xh_link="vless://$uuid@$server_ip:$xhpt?encryption=$enkey&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key_x&sid=$short_id_x&type=xhttp&path=$uuid-xh&mode=auto#${sxname}vl-xhttp-reality-$hostname"
-echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
-echo "$vl_xh_link"
-echo
-fi
-if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
-echo "💣【 Vless-xhttp-enc 】支持ENC加密，节点信息如下："
-vxpt=$(cat "$HOME/agsbx/vxpt")
-vl_vx_link="vless://$uuid@$server_ip:$vxpt?encryption=$enkey&flow=xtls-rprx-vision&type=xhttp&path=$uuid-vx&mode=auto#${sxname}vl-xhttp-$hostname"
-echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
-echo "$vl_vx_link"
-echo
-if [ -f "$HOME/agsbx/cdnym" ]; then
-echo "💣【 Vless-xhttp-ecn-cdn 】支持ENC加密，节点信息如下："
-echo "注：默认地址 zp数字.zp0110.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
-vl_vx_cdn_link="vless://$uuid@zp$(cfip).zp0110.dpdns.org:$vxpt?encryption=$enkey&flow=xtls-rprx-vision&type=xhttp&host=$xvvmcdnym&path=$uuid-vx&mode=auto#${sxname}vl-xhttp-$hostname"
-echo "$vl_vx_cdn_link" >> "$HOME/agsbx/jh.txt"
-echo "$vl_vx_cdn_link"
-echo
-fi
-fi
-if grep vless-ws "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
-echo "💣【 Vless-ws-enc 】支持ENC加密，节点信息如下："
-vwpt=$(cat "$HOME/agsbx/vwpt")
-vl_vw_link="vless://$uuid@$server_ip:$vwpt?encryption=$enkey&flow=xtls-rprx-vision&type=ws&path=$uuid-vw#${sxname}vl-ws-enc-$hostname"
-echo "$vl_vw_link" >> "$HOME/agsbx/jh.txt"
-echo "$vl_vw_link"
-echo
-if [ -f "$HOME/agsbx/cdnym" ]; then
-echo "💣【 Vless-ws-enc-cdn 】支持ENC加密，节点信息如下："
-echo "注：默认地址 zp数字.zp0110.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
-vl_vw_cdn_link="vless://$uuid@zp$(cfip).zp0110.dpdns.org:$vwpt?encryption=$enkey&flow=xtls-rprx-vision&type=ws&host=$xvvmcdnym&path=$uuid-vw#${sxname}vl-ws-enc-cdn-$hostname"
-echo "$vl_vw_cdn_link" >> "$HOME/agsbx/jh.txt"
-echo "$vl_vw_cdn_link"
-echo
-fi
-fi
-if grep reality-vision "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
-echo "💣【 Vless-tcp-reality-vision 】节点信息如下："
-vlpt=$(cat "$HOME/agsbx/vlpt")
-vl_link="vless://$uuid@$server_ip:$vlpt?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key_x&sid=$short_id_x&type=tcp&headerType=none#${sxname}vl-reality-vision-$hostname"
-echo "$vl_link" >> "$HOME/agsbx/jh.txt"
-echo "$vl_link"
-echo
-fi
-if grep ss-2022 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Shadowsocks-2022 】节点信息如下："
-sspt=$(cat "$HOME/agsbx/sspt")
-ss_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey@$server_ip:$sspt" | base64 -w0)#${sxname}Shadowsocks-2022-$hostname"
-echo "$ss_link" >> "$HOME/agsbx/jh.txt"
-echo "$ss_link"
-echo
-fi
-if grep vmess-xr "$HOME/agsbx/xr.json" >/dev/null 2>&1 || grep vmess-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Vmess-ws 】节点信息如下："
-vmpt=$(cat "$HOME/agsbx/vmpt")
-vm_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vm-ws-$hostname\", \"add\": \"$server_ip\", \"port\": \"$vmpt\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"www.bing.com\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vm_link" >> "$HOME/agsbx/jh.txt"
-echo "$vm_link"
-echo
-if [ -f "$HOME/agsbx/cdnym" ]; then
-echo "💣【 Vmess-ws-cdn 】节点信息如下："
-echo "注：默认地址 zp数字.zp0110.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
-vm_cdn_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vm-ws-cdn-$hostname\", \"add\": \"zp$(cfip).zp0110.dpdns.org\", \"port\": \"$vmpt\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$xvvmcdnym\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vm_cdn_link" >> "$HOME/agsbx/jh.txt"
-echo "$vm_cdn_link"
-echo
-fi
-fi
-if grep anytls-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 AnyTLS 】节点信息如下："
-anpt=$(cat "$HOME/agsbx/anpt")
-an_link="anytls://$uuid@$server_ip:$anpt?insecure=1&allowInsecure=1#${sxname}anytls-$hostname"
-echo "$an_link" >> "$HOME/agsbx/jh.txt"
-echo "$an_link"
-echo
-fi
-if grep anyreality-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Any-Reality 】节点信息如下："
-arpt=$(cat "$HOME/agsbx/arpt")
-ar_link="anytls://$uuid@$server_ip:$arpt?security=reality&sni=$reym&fp=chrome&pbk=$public_key_s&sid=$short_id_s&type=tcp&headerType=none#${sxname}any-reality-$hostname"
-echo "$ar_link" >> "$HOME/agsbx/jh.txt"
-echo "$ar_link"
-echo
-fi
-if grep hy2-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Hysteria2 】节点信息如下："
-hypt=$(cat "$HOME/agsbx/hypt")
-hy2_link="hysteria2://$uuid@$server_ip:$hypt?security=tls&alpn=h3&insecure=1&sni=www.bing.com#${sxname}hy2-$hostname"
-echo "$hy2_link" >> "$HOME/agsbx/jh.txt"
-echo "$hy2_link"
-echo
-fi
-if grep tuic5-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Tuic 】节点信息如下："
-tupt=$(cat "$HOME/agsbx/tupt")
-tuic5_link="tuic://$uuid:$uuid@$server_ip:$tupt?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=www.bing.com&allow_insecure=1&allowInsecure=1#${sxname}tuic-$hostname"
-echo "$tuic5_link" >> "$HOME/agsbx/jh.txt"
-echo "$tuic5_link"
-echo
-fi
-if grep socks5-xr "$HOME/agsbx/xr.json" >/dev/null 2>&1 || grep socks5-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Socks5 】客户端信息如下："
-sopt=$(cat "$HOME/agsbx/sopt")
-echo "请配合其他应用内置代理使用，勿做节点直接使用"
-echo "客户端地址：$server_ip"
-echo "客户端端口：$sopt"
-echo "客户端用户名：$uuid"
-echo "客户端密码：$uuid"
-echo
-fi
+	# echo "*********************************************************"
+	# echo "*********************************************************"
+	# echo "节点配置如下："
+	# echo
+	case "$server_ip" in
+	104.28*|\[2a09*) echo "检测到有WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请把客户端地址上的WARP的IP手动更换为VPS本地IPV4或者IPV6地址" && sleep 3 ;;
+	esac
+	# echo
+	reym=$(cat "$HOME/agsbx/reym" 2>/dev/null)
+	cfip() { echo $((RANDOM % 13 + 1)); }
+	if [ -e "$HOME/agsbx/xray" ]; then
+	private_key_x=$(cat "$HOME/agsbx/xrk/private_key" 2>/dev/null)
+	public_key_x=$(cat "$HOME/agsbx/xrk/public_key" 2>/dev/null)
+	short_id_x=$(cat "$HOME/agsbx/xrk/short_id" 2>/dev/null)
+	enkey=$(cat "$HOME/agsbx/xrk/enkey" 2>/dev/null)
+	fi
+	if [ -e "$HOME/agsbx/sing-box" ]; then
+	private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
+	public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
+	short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
+	sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
+	fi
+	if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
+	# echo "💣【 Vless-xhttp-reality-enc 】支持ENC加密，节点信息如下："
+	xhpt=$(cat "$HOME/agsbx/xhpt")
+	vl_xh_link="vless://$uuid@$server_ip:$xhpt?encryption=$enkey&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key_x&sid=$short_id_x&type=xhttp&path=$uuid-xh&mode=auto#${sxname}vl-xhttp-reality-$hostname"
+	echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vl_xh_link"
+	# echo
+	fi
+	if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
+	# echo "💣【 Vless-xhttp-enc 】支持ENC加密，节点信息如下："
+	vxpt=$(cat "$HOME/agsbx/vxpt")
+	vl_vx_link="vless://$uuid@$server_ip:$vxpt?encryption=$enkey&flow=xtls-rprx-vision&type=xhttp&path=$uuid-vx&mode=auto#${sxname}vl-xhttp-$hostname"
+	echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vl_vx_link"
+	# echo
+	if [ -f "$HOME/agsbx/cdnym" ]; then
+	# echo "💣【 Vless-xhttp-ecn-cdn 】支持ENC加密，节点信息如下："
+	# echo "注：默认地址 zp数字.zp0110.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
+	vl_vx_cdn_link="vless://$uuid@zp$(cfip).zp0110.dpdns.org:$vxpt?encryption=$enkey&flow=xtls-rprx-vision&type=xhttp&host=$xvvmcdnym&path=$uuid-vx&mode=auto#${sxname}vl-xhttp-$hostname"
+	echo "$vl_vx_cdn_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vl_vx_cdn_link"
+	# echo
+	fi
+	fi
+	if grep vless-ws "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
+	# echo "💣【 Vless-ws-enc 】支持ENC加密，节点信息如下："
+	vwpt=$(cat "$HOME/agsbx/vwpt")
+	vl_vw_link="vless://$uuid@$server_ip:$vwpt?encryption=$enkey&flow=xtls-rprx-vision&type=ws&path=$uuid-vw#${sxname}vl-ws-enc-$hostname"
+	echo "$vl_vw_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vl_vw_link"
+	# echo
+	if [ -f "$HOME/agsbx/cdnym" ]; then
+	# echo "💣【 Vless-ws-enc-cdn 】支持ENC加密，节点信息如下："
+	# echo "注：默认地址 zp数字.zp0110.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
+	vl_vw_cdn_link="vless://$uuid@zp$(cfip).zp0110.dpdns.org:$vwpt?encryption=$enkey&flow=xtls-rprx-vision&type=ws&host=$xvvmcdnym&path=$uuid-vw#${sxname}vl-ws-enc-cdn-$hostname"
+	echo "$vl_vw_cdn_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vl_vw_cdn_link"
+	# echo
+	fi
+	fi
+	if grep reality-vision "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
+	# echo "💣【 Vless-tcp-reality-vision 】节点信息如下："
+	vlpt=$(cat "$HOME/agsbx/vlpt")
+	vl_link="vless://$uuid@$server_ip:$vlpt?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key_x&sid=$short_id_x&type=tcp&headerType=none#${sxname}vl-reality-vision-$hostname"
+	echo "$vl_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vl_link"
+	# echo
+	fi
+	if grep ss-2022 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
+	# echo "💣【 Shadowsocks-2022 】节点信息如下："
+	sspt=$(cat "$HOME/agsbx/sspt")
+	ss_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey@$server_ip:$sspt" | base64 -w0)#${sxname}Shadowsocks-2022-$hostname"
+	echo "$ss_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$ss_link"
+	# echo
+	fi
+	if grep vmess-xr "$HOME/agsbx/xr.json" >/dev/null 2>&1 || grep vmess-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
+	# echo "💣【 Vmess-ws 】节点信息如下："
+	vmpt=$(cat "$HOME/agsbx/vmpt")
+	vm_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vm-ws-$hostname\", \"add\": \"$server_ip\", \"port\": \"$vmpt\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"www.bing.com\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
+	echo "$vm_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vm_link"
+	# echo
+	if [ -f "$HOME/agsbx/cdnym" ]; then
+	# echo "💣【 Vmess-ws-cdn 】节点信息如下："
+	# echo "注：默认地址 zp数字.zp0110.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
+	vm_cdn_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vm-ws-cdn-$hostname\", \"add\": \"zp$(cfip).zp0110.dpdns.org\", \"port\": \"$vmpt\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$xvvmcdnym\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
+	echo "$vm_cdn_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$vm_cdn_link"
+	# echo
+	fi
+	fi
+	if grep anytls-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
+	# echo "💣【 AnyTLS 】节点信息如下："
+	anpt=$(cat "$HOME/agsbx/anpt")
+	an_link="anytls://$uuid@$server_ip:$anpt?insecure=1&allowInsecure=1#${sxname}anytls-$hostname"
+	echo "$an_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$an_link"
+	# echo
+	fi
+	if grep anyreality-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
+	# echo "💣【 Any-Reality 】节点信息如下："
+	arpt=$(cat "$HOME/agsbx/arpt")
+	ar_link="anytls://$uuid@$server_ip:$arpt?security=reality&sni=$reym&fp=chrome&pbk=$public_key_s&sid=$short_id_s&type=tcp&headerType=none#${sxname}any-reality-$hostname"
+	echo "$ar_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$ar_link"
+	# echo
+	fi
+	if grep hy2-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
+	# echo "💣【 Hysteria2 】节点信息如下："
+	hypt=$(cat "$HOME/agsbx/hypt")
+	hy2_link="hysteria2://$uuid@$server_ip:$hypt?security=tls&alpn=h3&insecure=1&sni=www.bing.com#${sxname}hy2-$hostname"
+	echo "$hy2_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$hy2_link"
+	# echo
+	fi
+	if grep tuic5-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
+	# echo "💣【 Tuic 】节点信息如下："
+	tupt=$(cat "$HOME/agsbx/tupt")
+	tuic5_link="tuic://$uuid:$uuid@$server_ip:$tupt?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=www.bing.com&allow_insecure=1&allowInsecure=1#${sxname}tuic-$hostname"
+	echo "$tuic5_link" >> "$HOME/agsbx/jh.txt"
+	# echo "$tuic5_link"
+	# echo
+	fi
+	if grep socks5-xr "$HOME/agsbx/xr.json" >/dev/null 2>&1 || grep socks5-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
+	# echo "💣【 Socks5 】客户端信息如下："
+	sopt=$(cat "$HOME/agsbx/sopt")
+	# echo "请配合其他应用内置代理使用，勿做节点直接使用"
+	# echo "客户端地址：$server_ip"
+	# echo "客户端端口：$sopt"
+	# echo "客户端用户名：$uuid"
+	# echo "客户端密码：$uuid"
+	# echo
+	fi
 argodomain=$(cat "$HOME/agsbx/sbargoym.log" 2>/dev/null)
 [ -z "$argodomain" ] && argodomain=$(grep -a trycloudflare.com "$HOME/agsbx/argo.log" 2>/dev/null | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 if [ -n "$argodomain" ]; then
