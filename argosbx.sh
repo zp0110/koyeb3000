@@ -63,4 +63,5 @@ op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | gr
 case $(uname -m) in
 arm64|aarch64) cpu=arm64;;
 amd64|x86_64) cpu=amd64;;
-
+*) echo "不支持的架构"; exit 1;;
+esac
