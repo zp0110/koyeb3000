@@ -954,7 +954,7 @@ sxname=$(cat "$HOME/agsbx/name" 2>/dev/null)
 xvvmcdnym=$(cat "$HOME/agsbx/cdnym" 2>/dev/null)
 echo "*********************************************************"
 echo "*********************************************************"
-echo "koyeb3000脚本输出节点配置如下："
+echo "节点配置如下："
 echo
 case "$server_ip" in
 104.28*|\[2a09*) echo "检测到有WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请把客户端地址上的WARP的IP手动更换为VPS本地IPV4或者IPV6地址" && sleep 3 ;;
@@ -1173,12 +1173,12 @@ fi
 v4orv6
 echo "VPS系统：$op"
 echo "CPU架构：$cpu"
-echo "koyeb3000脚本未安装，开始安装…………" && sleep 2
+echo "脚本未安装，开始安装…………" && sleep 2
 ins
 cip
 echo
 else
-echo "koyeb3000脚本已安装"
+echo "脚本已安装"
 echo
 koyeb3000status
 echo
