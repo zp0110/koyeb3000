@@ -28,7 +28,7 @@ SAP个人注册地址：https://www.sap.com/products/technology-platform/trial.h
 
 
 
-* 方式二：Docker方式，镜像地址：```ygkkk/sapsbx```，可在clawcloud爪云等docker平台上运行。安装启动同时进行，自带8:10-9:00每5分钟的定时保活
+* 方式二：Docker方式，镜像地址：```zp0110/sapsbx```，可在clawcloud爪云等docker平台上运行。安装启动同时进行，自带8:10-9:00每5分钟的定时保活
 
 
 
@@ -73,7 +73,7 @@ VPS服务器方式脚本地址：（再次进入快捷方式```bash sap.sh```）
 
 
 
-* 方式二：Docker方式，镜像地址：```ygkkk/sapsbxh```，可在clawcloud爪云等docker平台上运行。仅保活，自带8:10-9:00每5分钟的定时保活
+* 方式二：Docker方式，镜像地址：```zp0110/sapsbxh```，可在clawcloud爪云等docker平台上运行。仅保活，自带8:10-9:00每5分钟的定时保活
 
 
 
