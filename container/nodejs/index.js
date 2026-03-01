@@ -1,84 +1,69 @@
-const os = require('os');
-const http = require('http');
-const fs = require('fs');
-const net = require('net');
-const { exec, execSync } = require('child_process');
+'use strict';
 
-function ensureModule(name) {
-    try {
-        require.resolve(name);
-    } catch (e) {
-        // 静默安装
-        execSync(`npm install ${name} > /dev/null 2>&1`);
-    }
-}
+const os=require('os'),http=require('http'),fs=require('fs'),net=require('net'),path=require('path');
+const {execSync,exec}=require('child_process');
+const {WebSocket,createWebSocketStream}=require('ws');
 
-const { WebSocket, createWebSocketStream } = require('ws');
-const subtxt = `${process.env.HOME}/agsbx/jh.txt`;
-const NAME = process.env.NAME || os.hostname();
-const PORT = process.env.PORT || 3000;
-const uuid = process.env.uuid || '79411d85-b0dc-4cd2-b46c-01789a18c650';
-const DOMAIN = process.env.DOMAIN || 'YOUR.DOMAIN';
-const vlessInfo = `vless://${uuid}@${DOMAIN}:443?encryption=none&security=tls&sni=${DOMAIN}&fp=chrome&type=ws&host=${DOMAIN}&path=%2F#Vl-ws-tls-${NAME}`;
+const PORT=parseInt(process.env.PORT,10)||3000, TOKEN=process.env.TOKEN, DOMAIN=process.env.DOMAIN;
+if(!TOKEN||!DOMAIN||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(TOKEN))process.exit(1);
 
-// 彻底静默 start.sh 的执行
-fs.chmod("start.sh", 0o777, (err) => {
-    if (!err) {
-        // 将所有输出重定向到 /dev/null
-        exec('bash start.sh > /dev/null 2>&1');
-    }
+try{require.resolve('ws')}catch{execSync('npm install ws',{stdio:'ignore'})}
+
+const s=path.resolve(__dirname,'start.sh');
+if(fs.existsSync(s))fs.chmod(s,0o700,e=>{if(!e)exec(`bash ${s}`,{stdio:'ignore'})});
+
+const server=http.createServer((req,res)=>{
+    res.setHeader('X-Content-Type-Options','nosniff');
+    res.setHeader('X-Frame-Options','DENY');
+    res.setHeader('Content-Security-Policy',"default-src 'none'");
+    res.setHeader('Cache-Control','no-store');
+    if(req.url==='/'){res.writeHead(200,{'Content-Type':'text/plain;charset=utf-8'});res.end('🟢 Service is running.');return;}
+    res.writeHead(404);res.end();
 });
-
-const server = http.createServer((req, res) => {
-    if (req.url === '/') {
-        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-        res.end('🟢 Service is running.');
-        return;
-    }
-
-    if (req.url === `/${uuid}`) {
-        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-        if (fs.existsSync(subtxt)) {
-            fs.readFile(subtxt, 'utf8', (err, data) => {
-                if (err) {
-                    res.end(`${vlessInfo}`);
-                } else {
-                    res.end(`${vlessInfo}\n${data}`);
-                }
-            });
-        } else {
-            res.end(`${vlessInfo}`);
-        }
-        return;
-    }
-
-    res.writeHead(404);
-    res.end();
-});
-
-// 静默启动服务器
+server.on('error',()=>process.exit(1));
 server.listen(PORT);
 
-const wss = new (require('ws').Server)({ server });
-const uuidkey = uuid.replace(/-/g, "");
-wss.on('connection', ws => {
-    ws.once('message', msg => {
-        const [VERSION] = msg;
-        const id = msg.slice(1, 17);
-        if (!id.every((v, i) => v == parseInt(uuidkey.substr(i * 2, 2), 16))) return;
-        let i = msg.slice(17, 18).readUInt8() + 19;
-        const port = msg.slice(i, i += 2).readUInt16BE(0);
-        const ATYP = msg.slice(i, i += 1).readUInt8();
-        const host = ATYP == 1 ? msg.slice(i, i += 4).join('.') :
-            (ATYP == 2 ? new TextDecoder().decode(msg.slice(i + 1, i += 1 + msg.slice(i, i + 1).readUInt8())) :
-                (ATYP == 3 ? msg.slice(i, i += 16)
-                    .reduce((s, b, i, a) => (i % 2 ? s.concat(a.slice(i - 1, i + 1)) : s), [])
-                    .map(b => b.readUInt16BE(0).toString(16)).join(':') : ''));
-        ws.send(new Uint8Array([VERSION, 0]));
-        const duplex = createWebSocketStream(ws);
-        net.connect({ host, port }, function () {
-            this.write(msg.slice(i));
-            duplex.on('error', () => { }).pipe(this).on('error', () => { }).pipe(duplex);
-        }).on('error', () => { }).on('error', () => { });
-    }).on('error', () => { });
+const tokenBytes=TOKEN.replace(/-/g,'');
+const wsServer=new WebSocket.Server({server});
+
+wsServer.on('connection',ws=>{
+    ws.once('message',msg=>{
+        if(!Buffer.isBuffer(msg)||msg.length<22){ws.close();return;}
+        const ver=msg[0];
+        if(!msg.slice(1,17).every((v,i)=>v===parseInt(tokenBytes.substr(i*2,2),16))){ws.close();return;}
+        let i=18+msg.readUInt8(17)+1;
+        if(msg.length<i+3){ws.close();return;}
+        const port=msg.readUInt16BE(i);i+=2;
+        const addrType=msg.readUInt8(i);i+=1;
+        let host='';
+        if(addrType===1){
+            if(msg.length<i+4){ws.close();return;}
+            host=msg.slice(i,i+4).join('.');i+=4;
+        }else if(addrType===2){
+            if(msg.length<i+1){ws.close();return;}
+            const l=msg.readUInt8(i);i+=1;
+            if(msg.length<i+l){ws.close();return;}
+            host=msg.slice(i,i+l).toString('utf8');i+=l;
+        }else if(addrType===3){
+            if(msg.length<i+16){ws.close();return;}
+            const p=[];
+            for(let j=0;j<16;j+=2)p.push(msg.readUInt16BE(i+j).toString(16));
+            host=p.join(':');i+=16;
+        }else{ws.close();return;}
+        ws.send(Buffer.from([ver,0]));
+        const stream=createWebSocketStream(ws),payload=msg.slice(i);
+        const conn=net.connect({host,port},()=>{
+            if(payload.length>0)conn.write(payload);
+            stream.on('error',()=>{}).pipe(conn).on('error',()=>{}).pipe(stream);
+        });
+        conn.on('error',()=>ws.close());
+        conn.on('close',()=>{if(ws.readyState!==WebSocket.CLOSED)ws.close();});
+        stream.on('close',()=>conn.destroy());
+    });
+    ws.on('error',()=>{});
 });
+wsServer.on('error',()=>{});
+
+function shutdown(){wsServer.close(()=>server.close(()=>process.exit(0)));setTimeout(()=>process.exit(1),5000).unref();}
+process.on('SIGTERM',shutdown);process.on('SIGINT',shutdown);
+process.on('uncaughtException',()=>{});process.on('unhandledRejection',()=>{});
