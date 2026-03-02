@@ -69,7 +69,6 @@ const htmlContent=`<!DOCTYPE html>
             background-color: rgba(255, 255, 255, 0.93);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             outline: none;
-            transition: all 0.3s ease;
             color: #0c3b2e;
         }
         
@@ -559,13 +558,6 @@ const htmlContent=`<!DOCTYPE html>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchBox = document.querySelector('.search-box');
-            searchBox.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'scale(1.02)';
-            });
-            
-            searchBox.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'scale(1)';
-            });
             
             const linkCards = document.querySelectorAll('.link-card');
             linkCards.forEach(card => {
