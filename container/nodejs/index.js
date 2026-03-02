@@ -558,37 +558,6 @@ const htmlContent=`<!DOCTYPE html>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const statValues = document.querySelectorAll('.stat-value');
-            
-            statValues.forEach(stat => {
-                const finalValue = stat.textContent;
-                stat.textContent = '0';
-                
-                const animateCounter = () => {
-                    const currentValue = parseInt(stat.textContent);
-                    const targetValue = parseInt(finalValue.replace(/\\D/g, ''));
-                    
-                    if (currentValue < targetValue) {
-                        const increment = Math.ceil(targetValue / 50);
-                        stat.textContent = Math.min(currentValue + increment, targetValue).toLocaleString() + finalValue.replace(/\\d+/g, '');
-                        setTimeout(animateCounter, 30);
-                    } else {
-                        stat.textContent = finalValue;
-                    }
-                };
-                
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            animateCounter();
-                            observer.unobserve(entry.target);
-                        }
-                    });
-                }, { threshold: 0.5 });
-                
-                observer.observe(stat.parentElement);
-            });
-            
             const searchBox = document.querySelector('.search-box');
             searchBox.addEventListener('focus', function() {
                 this.parentElement.style.transform = 'scale(1.02)';
