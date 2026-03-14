@@ -7,11 +7,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "bun index.js",
-    "dev":   "bun --watch index.js"
+    "start": "node index.js",
+    "dev": "node index.js"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "node": ">=20"
   },
   "dependencies": {
     "ws": "^8.0.0"
