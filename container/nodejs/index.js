@@ -5,8 +5,6 @@ const {WebSocket,createWebSocketStream}=require('ws');
 const PORT=parseInt(process.env.PORT,10)||3000, TOKEN=process.env.TOKEN, DOMAIN=process.env.DOMAIN;
 if(!TOKEN||!DOMAIN||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(TOKEN))process.exit(1);
 try{require.resolve('ws')}catch{execSync('npm install ws',{stdio:'ignore'})}
-// const s=path.resolve(__dirname,'start.sh');
-// if(fs.existsSync(s))fs.chmod(s,0o700,e=>{if(!e)exec(`bash ${s}`,{stdio:'ignore'})});
 
 const htmlContent=`<!DOCTYPE html>
 <html lang="en">
